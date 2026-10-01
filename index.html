@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>йоу</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Unbounded:wght@600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --sun: #FFD23F;
+    --night: #25235F;
+    --tomato: #FF5A5F;
+    --mint: #3DDBA8;
+    --sky: #BDE6FF;
+
+    --bg-hero: #FFD23F;
+    --bg-world: #BDE6FF;
+    --bg-foot: #25235F;
+    --ink: #25235F;
+    --ink-on-foot: #FFF6CC;
+    --card: #FFFFFF;
+    --line: #25235F;
+    --road: #2F2D73;
+    --road-deep: #1B1A4E;
+
+    --display: "Unbounded", "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    --text: "Nunito", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+
+    --ease-pop: cubic-bezier(.22, 1.2, .36, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg-hero: #26235F;
+      --bg-world: #181744;
+      --bg-foot: #0D0C29;
+      --ink: #FFF1B0;
+      --ink-on-foot: #FFF1B0;
+      --card: #2B2970;
+      --line: #FFD23F;
+      --road: #1B1A4E;
+      --road-deep: #11103A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg-hero: #26235F;
+    --bg-world: #181744;
+    --bg-foot: #0D0C29;
+    --ink: #FFF1B0;
+    --ink-on-foot: #FFF1B0;
+    --card: #2B2970;
+    --line: #FFD23F;
+    --road: #1B1A4E;
+    --road-deep: #11103A;
+  }
+
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
+  html, body { margin: 0; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    background: var(--bg-hero);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
+  p { margin: 0; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--tomato); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+
+  /* ================= ANIMATIONS ================= */
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50%      { transform: translateY(-6px) rotate(4deg); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes roadmove {
+    to { background-position: -48px 0; }
+  }
+  @keyframes idlebob {
+    0%, 100% { transform: translateY(0) scaleX(var(--flip, 1)); }
+    50%      { transform: translateY(-4px) scaleX(var(--flip, 1)); }
+  }
+  @keyframes winnerpop {
+    0%   { transform: translateY(0) scaleX(var(--flip, 1)) scale(1); }
+    35%  { transform: translateY(-16px) scaleX(var(--flip, 1)) scale(1.25); }
+    70%  { transform: translateY(0) scaleX(var(--flip, 1)) scale(.95); }
+    100% { transform: translateY(-6px) scaleX(var(--flip, 1)) scale(1.1); }
+  }
+  @keyframes shine {
+    from { background-position: 0% 50%; }
+    to   { background-position: 200% 50%; }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(.94); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes flagwave {
+    0%, 100% { transform: skewY(0deg); }
+    50%      { transform: skewY(-3deg); }
+  }
+  @keyframes pulseRing {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 210, 63, .55); }
+    100% { box-shadow: 0 0 0 12px rgba(255, 210, 63, 0); }
+  }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .75s var(--ease-pop); }
+  .reveal.is-in { opacity: 1; transform: none; }
+
+  /* ---------- header ---------- */
+  header.top {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.1rem 0;
+    animation: fadeUp .6s ease both;
+  }
+  .logo { font-family: var(--display); font-weight: 900; font-size: 1.05rem; text-decoration: none; display: flex; align-items: center; gap: .55rem; }
+  .logo span.badge {
+    display: inline-grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    background: var(--night); font-size: 1.15rem;
+    animation: floaty 3.4s ease-in-out infinite;
+    transition: transform .3s var(--ease-pop);
+  }
+  .logo:hover span.badge { animation-play-state: paused; transform: scale(1.15) rotate(10deg); }
+  nav a {
+    font-weight: 800; text-decoration: none; margin-left: 1.4rem; padding: .25rem 0;
+    border-bottom: 3px solid transparent; transition: border-color .25s ease, transform .25s ease;
+    display: inline-block;
+  }
+  nav a:hover { border-bottom-color: var(--tomato); transform: translateY(-2px); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 1.5rem 0 4.5rem; }
+  .hero h1 {
+    font-weight: 900; font-size: clamp(2.1rem, 6.4vw, 4.6rem); max-width: 16ch;
+    animation: fadeUp .8s .05s ease both;
+  }
+  .hero p.lead {
+    margin-top: 1.4rem; max-width: 52ch; font-size: 1.2rem; font-weight: 600;
+    animation: fadeUp .8s .18s ease both;
+  }
+
+  .stage {
+    margin-top: 2.4rem;
+    background: var(--road-deep);
+    color: #fff;
+    border: 3px solid var(--line);
+    border-radius: 28px;
+    box-shadow: 8px 8px 0 var(--line);
+    padding: 1.2rem;
+    animation: fadeUp .9s .3s ease both;
+    transition: box-shadow .3s ease, transform .3s ease;
+  }
+  .stage:hover { box-shadow: 12px 12px 0 var(--line); }
+  .stage-bar { display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .stage-bar h2 { font-size: 1.1rem; font-weight: 600; color: var(--sun); }
+  .score { font-weight: 800; color: var(--mint); font-size: .98rem; transition: transform .3s var(--ease-pop); }
+  .score.bump { transform: scale(1.18); }
+
+  .lanes { border-radius: 16px; overflow: hidden; background: var(--road); }
+  .lane { display: grid; grid-template-columns: 9.5rem 1fr; align-items: stretch; border-bottom: 2px dashed rgba(255,255,255,.35); transition: background .3s ease; }
+  .lane:last-child { border-bottom: 0; }
+  .pick {
+    appearance: none; border: 0; background: transparent; color: #fff; font: inherit; font-weight: 800; font-size: .95rem;
+    text-align: left; padding: .5rem .8rem; cursor: pointer; display: flex; align-items: center; gap: .5rem; line-height: 1.2;
+    border-right: 2px solid rgba(255,255,255,.18);
+    transition: background .25s ease, color .25s ease;
+  }
+  .pick:hover { background: rgba(255,255,255,.08); }
+  .pick:active { transform: scale(.98); }
+  .pick .star {
+    width: 1.15rem; height: 1.15rem; border-radius: 50%; border: 2px solid rgba(255,255,255,.55);
+    flex: none; display: grid; place-items: center; font-size: .7rem; color: transparent;
+    transition: background .25s ease, border-color .25s ease, color .25s ease, transform .3s var(--ease-pop);
+  }
+  .pick[aria-pressed="true"] { background: rgba(255, 210, 63, .18); }
+  .pick[aria-pressed="true"] .star { background: var(--sun); border-color: var(--sun); color: var(--night); transform: rotate(360deg) scale(1.1); }
+
+  .road { position: relative; height: 3.4rem; }
+  .road::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background-image: repeating-linear-gradient(90deg, transparent 0 24px, rgba(255,255,255,.09) 24px 48px);
+    opacity: 0; transition: opacity .35s ease;
+  }
+  .lanes.running .road::after { opacity: 1; animation: roadmove .55s linear infinite; }
+
+  .finish {
+    position: absolute; right: 0; top: 0; bottom: 0; width: 1.4rem; z-index: 2;
+    background: conic-gradient(#fff 25%, #111 0 50%, #fff 0 75%, #111 0) 0 0 / 0.7rem 0.7rem;
+    transform-origin: top center;
+    animation: flagwave 1.6s ease-in-out infinite;
+  }
+  .racer {
+    position: absolute; top: 50%; left: calc((100% - 3.9rem) * var(--p, 0)); z-index: 3;
+    margin-top: -1.3rem; width: 2.6rem; height: 2.6rem; font-size: 2rem; line-height: 2.6rem; text-align: center;
+    transform: translateY(var(--bob, 0px)) scaleX(var(--flip, 1)) rotate(var(--rot, 0deg));
+    will-change: left, transform; user-select: none;
+  }
+  .lanes:not(.running) .racer { animation: idlebob 2.6s ease-in-out infinite; }
+  .lanes:not(.running) .lane:nth-child(2) .racer { animation-delay: .2s; }
+  .lanes:not(.running) .lane:nth-child(3) .racer { animation-delay: .4s; }
+  .lanes:not(.running) .lane:nth-child(4) .racer { animation-delay: .6s; }
+  .lanes:not(.running) .lane:nth-child(5) .racer { animation-delay: .8s; }
+  .lanes:not(.running) .lane:nth-child(6) .racer { animation-delay: 1s; }
+
+  .lane.win { background: rgba(61, 219, 168, .12); }
+  .lane.win .pick { background: var(--mint); color: var(--night); animation: pulseRing 1.4s ease-out 2; }
+  .lane.win .pick .star { border-color: var(--night); background: var(--night); color: var(--sun); }
+  .lane.win .racer { animation: winnerpop .9s var(--ease-pop) forwards; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 1.1rem; }
+  .btn {
+    appearance: none; font-family: var(--display); font-weight: 600; font-size: .95rem; cursor: pointer;
+    background: var(--tomato); color: #fff; border: 3px solid #fff; border-radius: 999px; padding: .85rem 1.7rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,.35);
+    transition: transform .18s var(--ease-pop), box-shadow .18s ease, background .3s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+    background-size: 200% 100%; opacity: 0; transition: opacity .3s ease;
+  }
+  .btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 rgba(0,0,0,.35); }
+  .btn:hover:not(:disabled)::after { opacity: 1; animation: shine .9s linear infinite; }
+  .btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 rgba(0,0,0,.35); }
+  .btn:disabled { opacity: .55; cursor: default; }
+
+  .commentary {
+    flex: 1 1 18rem; min-height: 3.2rem; font-weight: 700; font-size: 1.05rem; color: #FFF6CC;
+    display: flex; align-items: center;
+  }
+  .commentary.flash { animation: popIn .35s var(--ease-pop); }
+
+  .hint { margin-top: .9rem; font-size: .95rem; color: rgba(255,255,255,.8); }
+
+  .results { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .5rem .9rem; }
+  .results li {
+    background: rgba(255,255,255,.1); border-radius: 12px; padding: .5rem .8rem; font-weight: 700; font-size: .95rem;
+    animation: popIn .4s var(--ease-pop) both;
+    transition: background .25s ease, transform .25s ease;
+  }
+  .results li:hover { background: rgba(255,255,255,.2); transform: translateX(4px); }
+  .results li b { color: var(--sun); font-family: var(--display); margin-right: .4rem; }
+  .verdict { margin-top: .9rem; font-weight: 800; color: var(--mint); font-size: 1.05rem; animation: popIn .45s var(--ease-pop) both; }
+
+  /* ---------- world ---------- */
+  .world { background: var(--bg-world); padding: 5rem 0; }
+  .section-head { max-width: 40rem; margin-bottom: 2.6rem; }
+  .section-head h2 { font-size: clamp(1.7rem, 4.4vw, 2.8rem); font-weight: 900; }
+  .section-head p { margin-top: 1rem; font-weight: 600; font-size: 1.1rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .card {
+    background: var(--card); border: 3px solid var(--line); border-radius: 24px; box-shadow: 6px 6px 0 var(--line);
+    padding: 1.2rem; display: flex; flex-direction: column; gap: .9rem; grid-column: span 2;
+    transition: transform .3s var(--ease-pop), box-shadow .3s ease;
+  }
+  .card:hover { transform: translate(-5px, -5px); box-shadow: 12px 12px 0 var(--line); }
+  .card h3 { font-size: 1.12rem; font-weight: 600; }
+  .card p { font-size: 1rem; }
+  .card .where { font-weight: 800; font-size: .92rem; color: var(--tomato); }
+  :root[data-theme="dark"] .card .where { color: var(--sun); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .card .where { color: var(--sun); } }
+
+  .card-body { display: flex; flex-direction: column; gap: .55rem; flex: 1; }
+
+  .thumb {
+    position: relative; display: block; overflow: hidden; border-radius: 16px;
+    border: 2px solid var(--line); aspect-ratio: 16 / 10; background: linear-gradient(135deg, var(--sun), var(--tomato));
+    text-decoration: none;
+  }
+  .thumb .thumb-emoji {
+    position: absolute; inset: 0; display: grid; place-items: center; font-size: 3.2rem;
+    transition: transform .4s var(--ease-pop);
+  }
+  .thumb:hover .thumb-emoji { transform: scale(1.12) rotate(-6deg); }
+  .thumb img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    opacity: 0; transition: opacity .6s ease, transform .6s var(--ease-pop);
+  }
+  .thumb img.is-loaded { opacity: 1; }
+  .thumb:hover img.is-loaded { transform: scale(1.07); }
+  .thumb::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.35));
+    opacity: 0; transition: opacity .35s ease;
+  }
+  .thumb:hover::after { opacity: 1; }
+
+  .wiki-link {
+    margin-top: auto; padding-top: .5rem; font-weight: 800; font-size: .92rem;
+  }
+  .wiki-link a {
+    display: inline-flex; align-items: center; gap: .35rem; text-decoration: none;
+    border-bottom: 2px solid transparent; transition: border-color .25s ease, gap .25s ease;
+    color: var(--tomato);
+  }
+  :root[data-theme="dark"] .wiki-link a { color: var(--sun); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wiki-link a { color: var(--sun); } }
+  .wiki-link a:hover { border-bottom-color: currentColor; gap: .6rem; }
+
+  .card.big { grid-column: span 4; flex-direction: row; align-items: stretch; gap: 2rem; background: var(--sun); color: var(--night); }
+  .card.big .thumb { width: min(340px, 38%); flex: none; aspect-ratio: 4 / 3; align-self: center; border-color: var(--night); }
+  .card.big .card-body { justify-content: center; }
+  .card.big h3 { font-size: clamp(1.3rem, 3vw, 1.9rem); }
+  .card.big .where { color: var(--night); }
+  .card.big .wiki-link a { color: var(--night); }
+  .card.big .thumb-emoji { font-size: 5rem; }
+
+  /* ---------- footer ---------- */
+  footer { background: var(--bg-foot); color: var(--ink-on-foot); padding: 3rem 0 3.5rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; }
+
+  .oleg-btn {
+    font-size: 1.15rem;
+    padding: 1rem 2.6rem;
+    background: var(--sun);
+    color: var(--night);
+    border-color: var(--night);
+    box-shadow: 5px 5px 0 rgba(0,0,0,.45);
+    letter-spacing: .04em;
+  }
+  .oleg-btn:hover:not(:disabled) { background: var(--mint); }
+
+  /* ---------- oleg modal ---------- */
+  .oleg-modal {
+    position: fixed; inset: 0; z-index: 999;
+    display: grid; place-items: center;
+    padding: 1.2rem;
+    padding-top: calc(1.2rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px));
+  }
+  .oleg-modal[hidden] { display: none; }
+  .oleg-backdrop {
+    position: absolute; inset: 0; background: rgba(9, 8, 30, .82);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    animation: olegFade .25s ease both;
+  }
+  @keyframes olegFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes olegPop {
+    from { opacity: 0; transform: translateY(18px) scale(.94); }
+    to   { opacity: 1; transform: none; }
+  }
+  .oleg-box {
+    position: relative; z-index: 1;
+    max-width: min(92vw, 620px);
+    animation: olegPop .38s var(--ease-pop) both;
+  }
+  .oleg-box img {
+    display: block; width: 100%; height: auto;
+    max-height: 82vh; object-fit: contain;
+    border-radius: 20px;
+    border: 4px solid var(--sun);
+    box-shadow: 10px 10px 0 rgba(0,0,0,.5);
+    background: #111;
+  }
+  .oleg-close {
+    position: absolute; top: -.9rem; right: -.9rem;
+    width: 2.6rem; height: 2.6rem; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--display); font-size: 1.1rem; font-weight: 600;
+    cursor: pointer; border: 3px solid var(--night);
+    background: var(--tomato); color: #fff;
+    box-shadow: 3px 3px 0 rgba(0,0,0,.45);
+    transition: transform .18s var(--ease-pop), background .25s ease;
+  }
+  .oleg-close:hover { transform: scale(1.12) rotate(90deg); background: var(--mint); }
+  .oleg-close:active { transform: scale(.95); }
+  body.oleg-open { overflow: hidden; }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .card { grid-column: span 2; }
+    .card.big { grid-column: span 2; flex-direction: column; align-items: stretch; gap: 1.2rem; }
+    .card.big .thumb { width: 100%; aspect-ratio: 16 / 10; }
+    nav a { margin-left: 1rem; }
+  }
+  @media (max-width: 560px) {
+    .lane { grid-template-columns: 6.2rem 1fr; }
+    .pick { font-size: .8rem; padding: .4rem .5rem; gap: .35rem; }
+    .pick .star { width: .95rem; height: .95rem; }
+    .stage { padding: .9rem; border-radius: 22px; }
+    .racer { font-size: 1.7rem; }
+    .grid { grid-template-columns: 1fr; }
+    .card, .card.big { grid-column: span 1; }
+    .oleg-box img { max-height: 74vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top wrap">
+  <a class="logo" href="#top"><span class="badge" aria-hidden="true">😎</span>Банцырев Захар</a>
+  <nav aria-label="Sections">
+    <a href="#race">Play</a>
+    <a href="#world">Races</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <h1>Races Where Laughter Is Louder Than Engines</h1>
+      <p class="lead">Here, ducks, snails, and cheese wheels win. Pick a favorite, hit Start, and see how it ends. Below are real funny races people hold around the world.</p>
+
+      <div class="stage" id="race" aria-labelledby="stage-title">
+        <div class="stage-bar">
+          <h2 id="stage-title">Race of the Day: Six Racers, Zero Chance to Predict the Finish</h2>
+          <div class="score" id="score">Guessed: 0 of 0</div>
+        </div>
+        <div class="lanes" id="lanes"></div>
+        <div class="controls">
+          <button class="btn" id="start" type="button">Start</button>
+          <div class="commentary" id="say" role="status" aria-live="polite">Click on a racer's name to pick a favorite.</div>
+        </div>
+        <ol class="results" id="results" hidden></ol>
+        <p class="verdict" id="verdict"></p>
+        <p class="hint" id="hint">You can pick a favorite before the start. All racers have equal chances to win.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="world" id="world">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Races from Around the World</h2>
+        <p>Some people race for cheese, some carry their wives, and some release thousands of rubber ducks into a river. Click on an image to go to Wikipedia for more details.</p>
+      </div>
+
+      <div class="grid">
+        <article class="card big">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Cooper%27s_Hill_Cheese-Rolling_and_Wake" target="_blank" rel="noopener noreferrer" data-wiki="Cooper's Hill Cheese-Rolling and Wake">
+            <span class="thumb-emoji" aria-hidden="true">🧀</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">Cooper's Hill, Gloucestershire, England</p>
+            <h3>Cheese Rolling Race</h3>
+            <p>A wheel of cheese is launched down a steep hill, and participants chase after it. Catching it is almost impossible, so most people tumble head over heels. The first to reach the bottom wins the cheese.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Cooper%27s_Hill_Cheese-Rolling_and_Wake" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Wife_carrying" target="_blank" rel="noopener noreferrer" data-wiki="Wife carrying">
+            <span class="thumb-emoji" aria-hidden="true">👫</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">Sonkajärvi, Finland</p>
+            <h3>Wife Carrying Championship</h3>
+            <p>An obstacle course, your partner on your shoulders, and a prize of beer equal to her weight. The main thing is not to drop her.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Wife_carrying" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Lawn_mower_racing" target="_blank" rel="noopener noreferrer" data-wiki="Lawn mower racing">
+            <span class="thumb-emoji" aria-hidden="true">🌱</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">England</p>
+            <h3>Lawn Mower Racing</h3>
+            <p>Blades are removed, engines are tuned, and a real championship is held. Speed is high, and the lawn's haircut is flawless.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Lawn_mower_racing" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Bathtub_racing" target="_blank" rel="noopener noreferrer" data-wiki="Bathtub racing">
+            <span class="thumb-emoji" aria-hidden="true">🛁</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">Dinant, Belgium</p>
+            <h3>Bathtub Regatta</h3>
+            <p>Crews decorate bathtubs like carnival floats and sail down the Meuse River. Sinking beautifully also counts.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Bathtub_racing" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Snail_racing" target="_blank" rel="noopener noreferrer" data-wiki="Snail racing">
+            <span class="thumb-emoji" aria-hidden="true">🐌</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">Congham, Norfolk, England</p>
+            <h3>World Snail Racing Championship</h3>
+            <p>Snails crawl from the center of a circle to its edge while spectators cheer them on. The one who doesn't change its mind wins.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Snail_racing" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Windsor,_Nova_Scotia" target="_blank" rel="noopener noreferrer" data-wiki="Windsor, Nova Scotia">
+            <span class="thumb-emoji" aria-hidden="true">🎃</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">Windsor, Nova Scotia, Canada</p>
+            <h3>Pumpkin Regatta</h3>
+            <p>Giant pumpkins are hollowed out, put on the water, and raced by rowing. Growing such a pumpkin is already a feat.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Windsor,_Nova_Scotia" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Cardboard_boat_race" target="_blank" rel="noopener noreferrer" data-wiki="Cardboard boat race">
+            <span class="thumb-emoji" aria-hidden="true">📦</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">In many cities</p>
+            <h3>Cardboard Boat Regattas</h3>
+            <p>A boat is glued together from cardboard and tape, then tested on real water. The winner is the one who floats, while the audience loves those who fall apart in the middle of the pond.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Cardboard_boat_race" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="thumb" href="https://en.wikipedia.org/wiki/Rubber_duck" target="_blank" rel="noopener noreferrer" data-wiki="Rubber duck">
+            <span class="thumb-emoji" aria-hidden="true">🦆</span>
+            <img alt="" decoding="async" referrerpolicy="no-referrer">
+          </a>
+          <div class="card-body">
+            <p class="where">Rivers around the world</p>
+            <h3>Rubber Duck Race</h3>
+            <p>Thousands of identical ducks are released downstream, and each one represents someone's ticket. Such races are usually held for charity.</p>
+            <p class="wiki-link"><a href="https://en.wikipedia.org/wiki/Rubber_duck" target="_blank" rel="noopener noreferrer">View on Wikipedia <span aria-hidden="true">↗</span></a></p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <button class="btn oleg-btn" id="olegBtn" type="button">олег</button>
+  </div>
+</footer>
+
+<!-- ================= OLEG MODAL ================= -->
+<div class="oleg-modal" id="olegModal" hidden>
+  <div class="oleg-backdrop" data-oleg-close></div>
+  <div class="oleg-box" role="dialog" aria-modal="true" aria-label="олег">
+    <button class="oleg-close" type="button" data-oleg-close aria-label="Закрыть">✕</button>
+    <img src="олег.jpeg" alt="олег" decoding="async">
+  </div>
+</div>
+
+<script>
+(function () {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ================= OLEG MODAL ================= */
+  var olegBtn = document.getElementById('olegBtn');
+  var olegModal = document.getElementById('olegModal');
+  var olegImg = olegModal.querySelector('img');
+  var lastFocus = null;
+
+  function openOleg() {
+    lastFocus = document.activeElement;
+    olegModal.hidden = false;
+    document.body.classList.add('oleg-open');
+    olegModal.querySelector('.oleg-close').focus();
+  }
+  function closeOleg() {
+    if (olegModal.hidden) return;
+    olegModal.hidden = true;
+    document.body.classList.remove('oleg-open');
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  }
+
+  olegBtn.addEventListener('click', openOleg);
+  olegModal.addEventListener('click', function (e) {
+    if (e.target.closest('[data-oleg-close]')) closeOleg();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !olegModal.hidden) closeOleg();
+  });
+  // если картинки нет — не показываем битую иконку
+  olegImg.addEventListener('error', function () {
+    olegImg.alt = 'картинка олег.jpeg не найдена';
+    olegImg.style.minHeight = '12rem';
+  });
+
+  /* ================= RACERS ================= */
+  var RACERS = [
+    { id: 'duck',    name: 'Duck Quack',    emoji: '🦆', flip: -1 },
+    { id: 'snail',   name: 'Turbo Snail',   emoji: '🐌', flip: 1 },
+    { id: 'bath',    name: 'Bubble Bath',   emoji: '🛁', flip: 1 },
+    { id: 'cheese',  name: 'Cheese Wheel',  emoji: '🧀', flip: 1 },
+    { id: 'cart',    name: 'Shopping Cart', emoji: '🛒', flip: 1 },
+    { id: 'chicken', name: 'Lucy the Chicken', emoji: '🐔', flip: -1 }
+  ];
+
+  var K = 1.05; // overall race pace
+  var lanesEl = document.getElementById('lanes');
+  var startBtn = document.getElementById('start');
+  var sayEl = document.getElementById('say');
+  var resultsEl = document.getElementById('results');
+  var verdictEl = document.getElementById('verdict');
+  var scoreEl = document.getElementById('score');
+  var hintEl = document.getElementById('hint');
+
+  var picked = null, running = false, raf = 0;
+  var stats = { races: 0, hits: 0 };
+  var lastSay = 0, order = [], t = 0, last = 0, leaderId = null, leaderCheck = 0;
+
+  /* ---------- racer behavior ----------
+     Average speed is roughly the same for everyone (~0.115),
+     so anyone can win. Only the "pattern" of the race differs. */
+  var BEHAVIOR = {
+    duck: function (r, s, t, dt) {
+      if (s.cd <= 0 && Math.random() < 0.16 * dt) {
+        s.pause = 0.65; s.cd = 3.5;
+        return { msg: 'The duck got distracted by a cloud.' };
+      }
+      return { v: 0.128 + 0.028 * Math.sin(t * 7 + s.phase) };
+    },
+    snail: function (r, s, t) {
+      if (!s.used && s.p > 0.45) {
+        s.used = true; s.boost = 1.5;
+        return { msg: 'The snail activated turbo! Nobody expected that.' };
+      }
+      return { v: 0.078 + 0.010 * Math.sin(t * 3 + s.phase) };
+    },
+    bath: function (r, s, t) {
+      return { v: 0.065 + 0.125 * s.p + 0.012 * Math.sin(t * 5 + s.phase) };
+    },
+    cheese: function (r, s, t, dt) {
+      if (!s.used && s.p > 0.2 && s.p < 0.8 && Math.random() < 0.35 * dt) {
+        s.used = true; s.pause = 1.2;
+        return { msg: 'The cheese wheel tripped over a bump!' };
+      }
+      return { v: 0.130 + 0.020 * Math.sin(t * 4 + s.phase) };
+    },
+    cart: function (r, s, t, dt) {
+      if (s.cd <= 0 && Math.random() < 0.18 * dt) {
+        s.pause = 0.55; s.cd = 3;
+        return { msg: 'The shopping cart took a wrong turn and came back.' };
+      }
+      return { v: 0.125 + 0.075 * Math.sin(t * 2.6 + s.phase) };
+    },
+    chicken: function (r, s, t, dt) {
+      var sprint = Math.sin(t * 2.4 + s.phase) > 0.15;
+      if (!sprint && s.cd <= 0 && Math.random() < 0.22 * dt) {
+        s.pause = 0.6; s.cd = 3.5;
+        return { msg: 'The chicken stopped to peck, the crowd is thrilled.' };
+      }
+      return { v: sprint ? 0.24 : 0.03 };
+    }
+  };
+
+  /* ================= BUILD THE TRACK ================= */
+  var laneEls = {};
+  RACERS.forEach(function (r) {
+    var lane = document.createElement('div');
+    lane.className = 'lane';
+
+    var pick = document.createElement('button');
+    pick.type = 'button';
+    pick.className = 'pick';
+    pick.setAttribute('aria-pressed', 'false');
+    pick.innerHTML = '<span class="star" aria-hidden="true">★</span><span></span>';
+    pick.lastChild.textContent = r.name;
+    pick.addEventListener('click', function () {
+      if (running) return;
+      picked = (picked === r.id) ? null : r.id;
+      refreshPicks();
+      sayNow(picked
+        ? 'Your favorite is ' + r.name + '. Press Start.'
+        : 'No favorite picked. Choose a racer to make cheering more fun.');
+    });
+
+    var road = document.createElement('div');
+    road.className = 'road';
+    var fin = document.createElement('div');
+    fin.className = 'finish';
+    var el = document.createElement('div');
+    el.className = 'racer';
+    el.setAttribute('aria-hidden', 'true');
+    el.textContent = r.emoji;
+    el.style.setProperty('--flip', r.flip);
+
+    road.appendChild(fin);
+    road.appendChild(el);
+    lane.appendChild(pick);
+    lane.appendChild(road);
+    lanesEl.appendChild(lane);
+    laneEls[r.id] = { lane: lane, pick: pick, el: el };
+  });
+
+  function refreshPicks() {
+    RACERS.forEach(function (r) {
+      laneEls[r.id].pick.setAttribute('aria-pressed', String(picked === r.id));
+    });
+  }
+
+  function sayNow(text) {
+    sayEl.textContent = text;
+    lastSay = performance.now();
+    if (!reduced) {
+      sayEl.classList.remove('flash');
+      void sayEl.offsetWidth;
+      sayEl.classList.add('flash');
+    }
+  }
+  function say(text) { var n = performance.now(); if (n - lastSay > 1400) sayNow(text); }
+  function nameOf(id) { return RACERS.filter(function (r) { return r.id === id; })[0].name; }
+
+  function resetRace() {
+    order = []; t = 0; leaderId = null; leaderCheck = 0;
+    resultsEl.hidden = true; resultsEl.innerHTML = ''; verdictEl.textContent = '';
+    lanesEl.classList.add('running');
+    RACERS.forEach(function (r) {
+      r.s = {
+        p: 0, pause: 0, boost: 0, cd: 0, used: false, done: false,
+        phase: Math.random() * 6.28,
+        form: 0.93 + Math.random() * 0.14   // slight "form of the day" — same for everyone
+      };
+      laneEls[r.id].lane.classList.remove('win');
+      laneEls[r.id].el.style.animation = '';
+      draw(r, 0);
+    });
+  }
+
+  function draw(r, bobT) {
+    var el = laneEls[r.id].el;
+    var s = r.s;
+    el.style.setProperty('--p', s.p.toFixed(4));
+    var bob = 0, rot = 0;
+    if (r.id === 'cheese') rot = s.p * 1800;
+    else if (r.id === 'bath') { bob = Math.sin(bobT * 9) * 2; rot = Math.sin(bobT * 6) * 4; }
+    else if (r.id === 'duck') { rot = Math.sin(bobT * 12) * 9; }
+    else if (r.id === 'chicken') { bob = -Math.abs(Math.sin(bobT * 10)) * 5; }
+    else if (r.id === 'cart') { rot = Math.sin(bobT * 8) * 6; }
+    else if (r.id === 'snail') { bob = Math.sin(bobT * 5) * 1.2; }
+    el.style.setProperty('--bob', bob.toFixed(1) + 'px');
+    el.style.setProperty('--rot', rot.toFixed(1) + 'deg');
+  }
+
+  /* ================= MAIN LOOP ================= */
+  function tick(now) {
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now; t += dt;
+
+    RACERS.forEach(function (r) {
+      var s = r.s;
+      if (s.done) return;
+      if (s.cd > 0) s.cd -= dt;
+
+      var v;
+      if (s.pause > 0) { s.pause -= dt; v = 0; }
+      else if (s.boost > 0) { s.boost -= dt; v = 0.30; }
+      else {
+        var res = BEHAVIOR[r.id](r, s, t, dt) || {};
+        if (res.msg) say(res.msg);
+        v = res.v !== undefined ? res.v : 0.1;
+        if (s.pause > 0) v = 0;
+        else if (s.boost > 0) v = 0.30;
+      }
+
+      v = Math.max(v, 0) * K * s.form;
+      s.p += v * dt;
+
+      if (s.p >= 1) {
+        s.p = 1; s.done = true; order.push(r.id);
+        if (order.length === 1) {
+          laneEls[r.id].lane.classList.add('win');
+          sayNow(r.name + ' crosses the finish line first!');
+        }
+      }
+      draw(r, t);
+    });
+
+    leaderCheck += dt;
+    if (leaderCheck > 0.6 && order.length === 0) {
+      leaderCheck = 0;
+      var lead = RACERS.slice().sort(function (a, b) { return b.s.p - a.s.p; })[0];
+      if (lead.id !== leaderId && lead.s.p > 0.08) {
+        leaderId = lead.id;
+        say(lead.name + ' pulls ahead.');
+      }
+    }
+
+    if (order.length < RACERS.length) raf = requestAnimationFrame(tick);
+    else finishRace();
+  }
+
+  function finishRace() {
+    running = false;
+    lanesEl.classList.remove('running');
+    startBtn.disabled = false;
+    startBtn.textContent = 'Another Race';
+
+    resultsEl.innerHTML = '';
+    order.forEach(function (id, i) {
+      var li = document.createElement('li');
+      li.style.animationDelay = (i * 70) + 'ms';
+      var b = document.createElement('b');
+      b.textContent = (i + 1) + '.';
+      li.appendChild(b);
+      li.appendChild(document.createTextNode(nameOf(id)));
+      resultsEl.appendChild(li);
+    });
+    resultsEl.hidden = false;
+
+    stats.races++;
+    var text;
+    if (picked) {
+      var place = order.indexOf(picked) + 1;
+      if (place === 1) { stats.hits++; text = 'Your favorite won! You definitely know something about racing.'; }
+      else if (place === RACERS.length) text = 'Your favorite came last and gets a prize for perseverance.';
+      else text = 'Your favorite came in ' + place + '. Better luck next time.';
+    } else {
+      text = nameOf(order[0]) + ' won. Pick a favorite to make the next race more exciting.';
+    }
+    verdictEl.textContent = text;
+    scoreEl.textContent = 'Guessed: ' + stats.hits + ' of ' + stats.races;
+    scoreEl.classList.remove('bump');
+    void scoreEl.offsetWidth;
+    scoreEl.classList.add('bump');
+    sayNow('Race finished.');
+  }
+
+  startBtn.addEventListener('click', function () {
+    if (running) return;
+    running = true;
+    startBtn.disabled = true;
+    resetRace();
+    sayNow(picked ? 'Start! Cheering for ' + nameOf(picked) + '!' : 'Start! Everyone dashed off.');
+    last = performance.now();
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(tick);
+  });
+
+  RACERS.forEach(function (r) {
+    r.s = { p: 0, pause: 0, boost: 0, cd: 0, used: false, done: false, phase: 0, form: 1 };
+    draw(r, 0);
+  });
+
+  /* ================= WIKIPEDIA IMAGES ================= */
+  function loadWikiImage(thumb) {
+    var title = thumb.getAttribute('data-wiki');
+    var img = thumb.querySelector('img');
+    if (!title || !img || thumb.dataset.loaded) return;
+    thumb.dataset.loaded = '1';
+
+    var url = 'https://en.wikipedia.org/w/api.php'
+      + '?action=query&format=json&origin=*&redirects=1'
+      + '&prop=pageimages&piprop=thumbnail&pithumbsize=900'
+      + '&titles=' + encodeURIComponent(title);
+
+    fetch(url, { credentials: 'omit' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var pages = data && data.query && data.query.pages;
+        if (!pages) return;
+        var key = Object.keys(pages)[0];
+        var page = pages[key];
+        var src = page && page.thumbnail && page.thumbnail.source;
+        if (!src) return;
+        img.addEventListener('load', function () { img.classList.add('is-loaded'); });
+        img.addEventListener('error', function () { img.removeAttribute('src'); });
+        img.alt = title;
+        img.src = src;
+      })
+      .catch(function () { /* emoji placeholder remains */ });
+  }
+
+  var thumbs = Array.prototype.slice.call(document.querySelectorAll('.thumb[data-wiki]'));
+  if ('IntersectionObserver' in window) {
+    var imgObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          loadWikiImage(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '250px 0px' });
+    thumbs.forEach(function (th) { imgObserver.observe(th); });
+  } else {
+    thumbs.forEach(loadWikiImage);
+  }
+
+  /* ================= SCROLL REVEAL ================= */
+  if (!reduced) {
+    document.querySelectorAll('.grid .card').forEach(function (card, i) {
+      card.classList.add('reveal');
+      card.style.transitionDelay = ((i % 4) * 70) + 'ms';
+    });
+    document.querySelectorAll('.section-head').forEach(function (el) {
+      el.classList.add('reveal');
+    });
+
+    if ('IntersectionObserver' in window) {
+      var revealObserver = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
+    } else {
+      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-in'); });
+    }
+  }
+})();
+</script>
+</body>
+</html>
